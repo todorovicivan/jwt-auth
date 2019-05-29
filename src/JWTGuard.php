@@ -77,7 +77,8 @@ class JWTGuard implements Guard
 
         if ($this->jwt->setRequest($this->request)->getToken() &&
             ($payload = $this->jwt->check(true)) &&
-            $this->validateSubject()
+            $this->validateSubject() &&
+            stripos($payload["iss"], $this->request->header("host")) !== false // Added the condition so this could be used with multi tenant hyn package
         ) {
             return $this->user = $this->provider->retrieveById($payload['sub']);
         }
